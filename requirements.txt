@@ -1,0 +1,13 @@
+django~=4.2
+
+channels[daphne]~=4.0.0
+
+channels_redis~=4.0.0
+
+redis!=4.4.0
+
+django-environ
+
+djangorestframework
+
+requests
