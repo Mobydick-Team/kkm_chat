@@ -31,30 +31,26 @@ class ChatConsumer(JsonWebsocketConsumer):
             self.channel_name
         )
         self.accept()
-
-    # def disconnect(self, code):
-    #     async_to_sync(self.channel_layer.group_decend)(
-    #         self.group_name,
-    #         self.channel_name,
-    #     )
-
     def receive_json(self, content, **kwargs):
         _type = content["type"]
-        if _type == "chat.message":
-            message = content["message"]
-            send_message = Message.objects.create(from_id=self.user_id, room=self.room, content=message)
-            serialized_obj = MessageSerializer(send_message)
+        message = content["message"]
+        if _type == "chat.message" or _type == "chat.promise" or _type == "chat.image":
+            data = self.room.add_message(room=self.room, from_id=self.user_id, message=message, type=_type)
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
-                    "type": "chat.message",
-                    "message": serialized_obj.data,
+                    "type": "chat",
+                    "message": data,
                 }
             )
-        # elif _type == 'chat.proimse':
-        #     print('chat.promise')
-        # elif _type == 'chat.image':
-        #     print('chati')
-
-    def chat_message(self, message_dict):
+        elif _type == 'read.message':
+            self.room.read()
+            async_to_sync(self.channel_layer.group_send)(
+                self.group_name,
+                {
+                    "type": "chat",
+                    "message": {},
+                }
+            )
+    def chat(self, message_dict):
         self.send_json(message_dict)

@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from chat.models import Room
 from chat.serializers import RoomSerializer
 
+
+
 class RoomAPIView(APIView):
     def get(self, request):
         user_id = request.user_id
@@ -17,7 +19,7 @@ class RoomAPIView(APIView):
     def post(self, request):
         user1_id = request.user_id
         user2_id = request.data['user_id']
-        if user1_id > user2_id :
+        if user1_id > user2_id:
             user1_id, user2_id = user2_id, user1_id
 
         try:
@@ -26,3 +28,4 @@ class RoomAPIView(APIView):
             room = Room.objects.get(user1=user1_id, user2=user2_id)
         rs = RoomSerializer(room)
         return Response(rs.data, status=HTTPStatus.CREATED)
+
