@@ -18,6 +18,7 @@ class Room(models.Model):
         self.save()
         from chat.serializers import MessageSerializer
         message = Message(room=room, from_id=from_id, content=message, type=type)
+        message.save()
         serialized_obj = MessageSerializer(message)
         return serialized_obj.data
     class Meta:

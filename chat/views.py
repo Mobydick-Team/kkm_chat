@@ -1,14 +1,26 @@
 from http import HTTPStatus
 
 from django.db.models import Q
+from django.http import Http404
+from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from chat.models import Room
-from chat.serializers import RoomSerializer
+from chat.models import Room, Message
+from chat.serializers import RoomSerializer, MessageSerializer
 
-
-
+# def UploadIma
+class MessageListView(ListAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    def get_queryset(self):
+        qs = super().get_queryset()
+        room = get_object_or_404(Room, pk=self.kwargs["room"])
+        user_id = self.request.user_id
+        if room.user1 != user_id and room.user2 != user_id :
+            raise Http404("Room does not exist")
+        qs = qs.filter(room=room)
+        return qs
 class RoomAPIView(APIView):
     def get(self, request):
         user_id = request.user_id
