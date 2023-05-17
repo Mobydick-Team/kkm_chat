@@ -33,9 +33,9 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.accept()
     def receive_json(self, content, **kwargs):
         _type = content["type"]
-        message = content["message"]
+        send_content = content["content"]
         if _type == "chat.message" or _type == "chat.promise" or _type == "chat.image":
-            data = self.room.add_message(room=self.room, from_id=self.user_id, message=message, type=_type)
+            data = self.room.add_message(room=self.room, from_id=self.user_id, content=send_content, type=_type)
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
@@ -48,9 +48,11 @@ class ChatConsumer(JsonWebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
-                    "type": "chat",
-                    "message": {},
+                    "type": "read.message",
                 }
             )
     def chat(self, message_dict):
+        self.send_json(message_dict["message"])
+
+    def read_message(self, message_dict):
         self.send_json(message_dict)

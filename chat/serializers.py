@@ -1,4 +1,3 @@
-
 from chat.models import Message, Room
 
 from rest_framework import serializers
