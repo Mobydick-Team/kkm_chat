@@ -7,12 +7,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from chat.models import Room, Message
-from chat.serializers import RoomSerializer, MessageSerializer
+from chat.serializers import RoomSerializer, MessageSerializer, MessageListSerializer
+
 
 # def UploadIma
 class MessageListView(ListAPIView):
     queryset = Message.objects.all()
-    serializer_class = MessageSerializer
+    serializer_class = MessageListSerializer
     def get_queryset(self):
         qs = super().get_queryset()
         room = get_object_or_404(Room, pk=self.kwargs["room"])

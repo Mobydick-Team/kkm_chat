@@ -7,6 +7,11 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
 
+class MessageListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = 'from_id, content, sent_id, type'
+
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
