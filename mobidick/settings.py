@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ks^s+rjfwvbvjn($6_afyz^b3+ed)2mk%zct#46mc#x36d8m!h'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -154,3 +153,6 @@ if "CHANNEL_LAYER_REDIS_URL" in env:
             }
         }
     }
+
+if "JWT_SECRET_KEY" in env :
+    JWT_SECRET_KEY = env.read_env('AWS_BUCKET')

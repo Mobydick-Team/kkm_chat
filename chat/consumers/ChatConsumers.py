@@ -1,27 +1,24 @@
-import requests
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
-import json
-
-from rest_framework.generics import get_object_or_404
-
-from chat.models import Room, Message
-from chat.serializers import MessageSerializer
+from django.db.models import Q
+from chat.models import Room
+from mobidick.settings import JWT_SECRET_KEY
+from mobidick.utils.getUserId import getUserId
 
 
 class ChatConsumer(JsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         group_name = ""
-        self.user_id = None
+        user_id = ""
+        room = None
     def connect(self):
-        room_id = self.scope["url_route"]["kwargs"]["user_id"]
-        self.group_name = "chat-%s" % self.scope["url_route"]["kwargs"]["user_id"]
         try:
-            res = requests.get('http://localhost:8080/accounts/jwt/', headers={
-                'Authorization': "bearer " + self.scope["url_route"]["kwargs"]["token"]
-            })
-            self.user_id = res.json()
+            self.user_id = getUserId(self.scope["url_route"]["kwargs"]["token"], JWT_SECRET_KEY)
+            self.group_name = "chat-%s" % self.scope["url_route"]["kwargs"]["room_id"]
+            q = Q(pk=self.scope["url_route"]["kwargs"]["room_id"])
+            q &= Q(user1 = self.user_id) | Q(user2 = self.user_id)
+            self.room = Room.objects.get(q)
         except Exception as e:
             self.close()
 
@@ -31,13 +28,12 @@ class ChatConsumer(JsonWebsocketConsumer):
         )
         self.accept()
     def disconnect(self, code):
-        pass
+        self.close()
     def receive_json(self, content, **kwargs):
         _type = content["type"]
         send_content = content["content"]
-        room = get_object_or_404(pk = content["room_id"])
         if _type == "chat.message" or _type == "chat.promise" or _type == "chat.image":
-            data = room.add_message(room=self.room, from_id=self.user_id, content=send_content, type=_type)
+            data = self.room.add_message(room=self.room, from_id=self.user_id, content=send_content, type=_type)
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
@@ -48,7 +44,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                 }
             )
         elif _type == 'read.message':
-            room.read()
+            self.room.read()
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
