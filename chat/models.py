@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 class Room(models.Model):
@@ -11,18 +13,11 @@ class Room(models.Model):
     def get_last_message(self):
         return self.messages.all()[-1];
     def add_message(self, room, from_id, type, content):
-        self.last_sender = from_id
-        self.unread_chat = self.unread_chat + 1
-        self.save()
         from chat.serializers import MessageSerializer
         message = Message(room=room, from_id=from_id, content=content, type=type)
-        # serialized_obj = MessageSerializer(data=message)
-        # if serialized_obj.is_valid():
-        #     serialized_obj.save()
-        # else :
-        #     print(serialized_obj.errors);
-        # return serialized_obj.data
-        # returm message
+        message.save()
+        serialized_obj = MessageSerializer(message)
+        return serialized_obj.data
 
     def delete_message(self, message_id):
         message_list = self.messages.all();
@@ -37,6 +32,8 @@ class Message(models.Model):
     type = models.CharField(max_length=100) #image, message, promise
     class Meta:
         ordering = ['sent_at']
+
+
 
 
 

@@ -19,14 +19,15 @@ class ChatConsumers(JsonWebsocketConsumer):
             q = Q(pk=self.scope["url_route"]["kwargs"]["room_id"])
             q &= Q(user1 = self.user_id) | Q(user2 = self.user_id)
             self.room = Room.objects.get(q)
+            async_to_sync(self.channel_layer.group_add)(
+                self.group_name,
+                self.channel_name
+            )
+            self.accept()
         except Exception as e:
             self.close()
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name,
-            self.channel_name
-        )
-        self.accept()
+
     def disconnect(self, code):
         self.close()
     def receive_json(self, content, **kwargs):
@@ -38,9 +39,7 @@ class ChatConsumers(JsonWebsocketConsumer):
                 self.group_name,
                 {
                     "type": "chat",
-                    "message": {
-                        data,
-                    },
+                    "message": data,
                 }
             )
         elif _type == 'read.message':

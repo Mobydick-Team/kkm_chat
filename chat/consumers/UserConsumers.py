@@ -15,42 +15,44 @@ class UserConsumer(JsonWebsocketConsumer):
         try:
             self.user_id = getUserId(self.scope["url_route"]["kwargs"]["token"], JWT_SECRET_KEY)
             self.group_name = "chat-%s" % self.scope["url_route"]["kwargs"]["user_id"]
+            async_to_sync(self.channel_layer.group_add)(
+                self.group_name,
+                self.channel_name
+            )
+            self.accept()
         except Exception as e:
             self.close()
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name,
-            self.channel_name
-        )
-        self.accept()
     def disconnect(self, code):
         pass
     def receive_json(self, content, **kwargs):
         _type = content["type"]
         if _type == "chat.message" or _type == "chat.promise" or _type == "chat.image":
-            data = {
-                "room_id": content["room_id"],
-                "message": content["content"],
-                "from_id": self.user_id
-            }
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     "type": "chat",
-                    "message": {
-                        data,
+                    "data": {
+                        "type": _type,
+                        "room_id": content["room_id"],
+                        "message": content["content"],
+                        "from_id": self.user_id
                     },
                 }
             )
         elif _type == 'read.message':
-            self.room.read()
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     "type": "read.message",
+                    "data": {
+                        "type": _type,
+                        "room_id": content["room_id"],
+                        "from_id": self.user_id
+                    },
                 }
             )
     def chat(self, message_dict):
-        self.send_json(message_dict["message"])
+        self.send_json(message_dict["data"])
 
     def read_message(self, message_dict):
-        self.send_json(message_dict)
+        self.send_json(message_dict["data"])
