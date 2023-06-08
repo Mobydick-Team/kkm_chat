@@ -3,6 +3,9 @@ from http import HTTPStatus
 import requests
 from django.http import JsonResponse
 
+from mobidick.settings import JWT_SECRET_KEY
+from mobidick.utils.getUserId import getUserId
+
 
 class JsonWebTokenMiddleWare(object):
     def __init__(self, get_response):
@@ -12,10 +15,8 @@ class JsonWebTokenMiddleWare(object):
     def __call__(self, request):
         # 뷰가 호출되기 전에 실행될 코드들
         try:
-            res = requests.get('http://localhost:8080/accounts/jwt/', headers={
-                'Authorization': request.headers['Authorization']
-            })
-            request.user_id = res.json()
+            jwt = request.headers['Authorization'].split(' ')[1];
+            request.user_id = getUserId(jwt, JWT_SECRET_KEY)
         except:
             return JsonResponse(
                 {"error": "Authorization Error"}, status=HTTPStatus.UNAUTHORIZED
