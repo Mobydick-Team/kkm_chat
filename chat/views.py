@@ -7,19 +7,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from chat.models import Room, Message
-from chat.serializers import RoomSerializer, MessageSerializer, MessageListSerializer
+from chat.serializers import RoomSerializer, MessageSerializer
+
 
 
 # def UploadIma
 class MessageListView(ListAPIView):
     queryset = Message.objects.all()
-    serializer_class = MessageListSerializer
+    serializer_class = MessageSerializer
     def get_queryset(self):
         qs = super().get_queryset()
         room = get_object_or_404(Room, pk=self.kwargs["room"])
         user_id = self.request.user_id
+        print(type(user_id))
+        print(type(room.user1), type(room.user2))
         if room.user1 != user_id and room.user2 != user_id :
-            raise Http404("Room does not exist")
+            raise Http404("방에 속해 있지 않아요")
         qs = qs.filter(room=room)
         return qs
 class RoomAPIView(APIView):
