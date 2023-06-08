@@ -1,12 +1,12 @@
 from django.db import models
 
-
-
 class Room(models.Model):
     user1 = models.IntegerField()
     user2 = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    last_chat = models.DateTimeField(null=True)
+    last_chat_at = models.DateTimeField(null=True)
+    last_message_type = models.CharField(max_length=100) #image, message, promise
+    last_content = models.TextField()
     last_sender = models.IntegerField(null=True)
     unread_chat = models.IntegerField(default=0)
     def read(self):
@@ -19,13 +19,13 @@ class Room(models.Model):
         from chat.serializers import MessageSerializer
         message = Message(room=room, from_id=from_id, content=content, type=type)
         serialized_obj = MessageSerializer(message).save();
-
         return serialized_obj.data
+
     class Meta:
         unique_together = ["user1", "user2"]
         ordering = ['-last_chat']
 class Message(models.Model):
-    room = models.ForeignKey('Room', on_delete=models.CASCADE)
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name="messages");
     from_id = models.IntegerField()
     content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
