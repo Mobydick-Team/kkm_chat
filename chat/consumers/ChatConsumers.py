@@ -6,7 +6,7 @@ from mobidick.settings import JWT_SECRET_KEY
 from mobidick.utils.getUserId import getUserId
 
 
-class ChatConsumer(JsonWebsocketConsumer):
+class ChatConsumers(JsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         group_name = ""

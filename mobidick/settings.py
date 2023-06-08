@@ -134,6 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # channels setting
 env = Env()
 env_path = BASE_DIR / ".env"
+
+import os
+import environ
+
+
 if env_path.exists():
     with env_path.open(encoding="utf8") as f:
         env.read_env(f, overwrite=True)
@@ -155,4 +160,4 @@ if "CHANNEL_LAYER_REDIS_URL" in env:
     }
 
 if "JWT_SECRET_KEY" in env :
-    JWT_SECRET_KEY = env.read_env('AWS_BUCKET')
+    JWT_SECRET_KEY = env('JWT_SECRET_KEY')

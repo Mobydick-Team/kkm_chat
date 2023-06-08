@@ -1,6 +1,6 @@
 django~=4.2
 
-channels[daphne]~=4.0.0
+channels[daphne]
 
 channels_redis~=4.0.0
 
@@ -11,3 +11,5 @@ django-environ
 djangorestframework
 
 requests
+
+pyjwt
