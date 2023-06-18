@@ -1,17 +1,20 @@
-django~=4.2
+Django==4.2
 
 channels[daphne]
 
 channels_redis==4.0.0
 
-redis!=4.4.0
+redis==4.5.4
 
 django-environ
 
 djangorestframework
+
 
 requests
 
 pyjwt
 
 drf-yasg
+
+django-cors-headers

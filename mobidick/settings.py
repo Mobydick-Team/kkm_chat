@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ks^s+rjfwvbvjn($6_afyz^b3+ed)2mk%zct#46mc#x36d8m!h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     #pip
     'rest_framework',
     'drf_yasg',
+    'corsheaders',
     #local_app
     'chat',
 ]
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -159,9 +161,12 @@ if "CHANNEL_LAYER_REDIS_URL" in env:
         }
     }
 
+#JWT
 if "JWT_SECRET_KEY" in env :
     JWT_SECRET_KEY = env('JWT_SECRET_KEY')
 
+
+#SWAGGER
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS' : {
         'Bearer':{
@@ -171,3 +176,13 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+#HOST
+if "HOST" in env :
+    ALLOWED_HOSTS += [env('HOST')]
+
+
+CORS_ORIGIN_WHITELIST = (
+    "http://35.216.118.20:9000",
+    "http://127.0.0.1:8000"
+)
