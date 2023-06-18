@@ -2,7 +2,7 @@ django~=4.2
 
 channels[daphne]
 
-channels_redis~=4.0.0
+channels_redis==4.0.0
 
 redis!=4.4.0
 
@@ -13,3 +13,5 @@ djangorestframework
 requests
 
 pyjwt
+
+drf-yasg

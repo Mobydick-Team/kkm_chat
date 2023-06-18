@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     #local_app
     'chat',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

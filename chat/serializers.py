@@ -9,6 +9,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     last_message = serializers.SerializerMethodField("get_last_message")
+
     def get_last_message(self, room):
         if room.get_last_message() :
             return MessageSerializer(room.get_last_message()).data
@@ -17,4 +18,4 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['user1', 'user2', 'created_at', 'unread_chat', 'last_message']
+        fields = ['id', 'user1', 'user2', 'created_at', 'unread_chat', 'last_chat_at', 'last_message']
