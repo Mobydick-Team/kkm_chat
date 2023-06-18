@@ -15,8 +15,7 @@ class JsonWebTokenMiddleWare(object):
     def __call__(self, request):
         # 뷰가 호출되기 전에 실행될 코드들
         try:
-            print(request.path)
-            if request.path != '/swagger/' :
+            if request.path != '/swagger/':
                 jwt = request.headers['Authorization'].split(' ')[1];
                 request.user_id = getUserId(jwt, JWT_SECRET_KEY)
         except:

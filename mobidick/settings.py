@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #pip
     'rest_framework',
+    'drf_yasg',
     #local_app
     'chat',
 ]
@@ -160,3 +161,13 @@ if "CHANNEL_LAYER_REDIS_URL" in env:
 
 if "JWT_SECRET_KEY" in env :
     JWT_SECRET_KEY = env('JWT_SECRET_KEY')
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS' : {
+        'Bearer':{
+            'type':'apiKey',
+            'name':'Authorization',
+            'in':'header'
+        }
+    }
+}
