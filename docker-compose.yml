@@ -1,0 +1,20 @@
+version: "3"
+
+# docker-compose 볼륨 정의 (이 볼륨은 도커가 관리함)
+volumes:
+  postgres_db_dev: {}
+
+# 띄울 컨테이너 목록
+services:
+  # Django container
+  django:
+    # 컨테이너 명
+    container_name : chat
+    image: th2912/chat:0.2
+    ports:
+      - "9000:8000"
+  redis:
+    container_name: redis_service
+    image: redis
+    ports:
+      - "6379:6379"
