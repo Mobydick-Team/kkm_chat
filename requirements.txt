@@ -18,3 +18,5 @@ pyjwt
 drf-yasg
 
 django-cors-headers
+coreapi
+pyyaml

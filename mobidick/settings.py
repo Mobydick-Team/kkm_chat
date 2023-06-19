@@ -186,3 +186,8 @@ CORS_ORIGIN_WHITELIST = (
     "http://35.216.118.20:9000",
     "http://127.0.0.1:8000"
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
+}

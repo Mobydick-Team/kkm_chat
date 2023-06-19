@@ -10,8 +10,6 @@ from chat.models import Room, Message
 from chat.serializers import RoomSerializer, MessageSerializer
 
 
-
-# def UploadIma
 class MessageListView(ListAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer

@@ -33,7 +33,7 @@ class Message(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=100) #image, message, promise
     class Meta:
-        ordering = ['sent_at']
+        ordering = ['-sent_at']
 
 
 

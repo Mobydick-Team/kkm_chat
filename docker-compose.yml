@@ -10,11 +10,10 @@ services:
   django:
     # 컨테이너 명
     container_name : chat
-    image: th2912/chat:0.2
-    ports:
-      - "9000:8000"
+    image: th2912/chat:0.4
+    network_mode: host
   redis:
     container_name: redis_service
     image: redis
     ports:
-      - "6379:6379"
+      - "32770:6379"
