@@ -23,12 +23,16 @@ class MessageListView(ListAPIView):
             raise Http404("방에 속해 있지 않아요")
         qs = qs.filter(room=room)
         return qs
+
+
 class RoomAPIView(APIView):
     def get(self, request):
         user_id = request.user_id
         qs = Room.objects.filter(Q(user1=user_id) | Q(user2=user_id))
         serializedRoom = RoomSerializer(qs, many=True)
-        return Response(serializedRoom.data, status=HTTPStatus.OK)
+        return Response({
+            "data ": serializedRoom.data
+        }, status=HTTPStatus.OK)
 
     def post(self, request):
         user1_id = request.user_id
