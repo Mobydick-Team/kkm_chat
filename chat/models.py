@@ -6,7 +6,7 @@ class Room(models.Model):
     user1 = models.TextField()
     user2 = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    last_chat_at = models.DateTimeField(null=True)
+    last_chat_at = models.DateTimeField(auto_now_add=True)
     unread_chat = models.IntegerField(default=0)
     def read(self):
         self.unread_chat = 0
