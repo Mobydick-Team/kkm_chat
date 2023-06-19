@@ -6,7 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied, NotFound
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, get_object_or_404, DestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -17,6 +17,7 @@ from chat.serializers import RoomSerializer, MessageSerializer
 class MessageListView(ListAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    pagination_class = None
     def get_queryset(self):
         qs = super().get_queryset()
         room = get_object_or_404(Room, pk=self.kwargs["room"])
@@ -54,8 +55,9 @@ class RoomAPIView(APIView):
         rs = RoomSerializer(room)
         return Response(rs.data, status=HTTPStatus.CREATED)
 
-@api_view(["DELETE"])
-def RoomDeleteView(request, pk):
+
+@api_view(["DELETE", "GET"])
+def RoomDetailView(request, pk):
     user_id = request.user_id
     try:
         userQ = Q(user1 = user_id) | Q(user2 = user_id)
@@ -63,5 +65,9 @@ def RoomDeleteView(request, pk):
         room = Room.objects.get(q)
     except:
         raise NotFound()
-    room.delete()
-    return Response(status=HTTPStatus.ACCEPTED)
+    if request.method == 'DELETE':
+        room.delete()
+        return Response(status=HTTPStatus.ACCEPTED)
+    elif request.method == 'GET':
+        res = RoomSerializer(room)
+        return Response(res.data, status=HTTPStatus.ACCEPTED)
