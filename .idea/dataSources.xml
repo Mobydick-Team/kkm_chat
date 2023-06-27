@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="kkm@mobydick.cxfnbfus27dl.ap-northeast-2.rds.amazonaws.com" uuid="9f8645aa-ff1a-4550-83e9-450a8bcfc6c8">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <remarks>123</remarks>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://mobydick.cxfnbfus27dl.ap-northeast-2.rds.amazonaws.com:3306/kkm?useSSL=false&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

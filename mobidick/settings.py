@@ -84,12 +84,7 @@ ASGI_APPLICATION = 'mobidick.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+
 
 
 # Password validation
@@ -191,5 +186,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
+import pymysql
+pymysql.install_as_MySQLdb()
+DB_NAME = env('DB_NAME')
+DB_USER = env('DB_USERNAME')
+DB_PASSWORD = env('DB_PWD')
+DB_HOST = env('DB_HOST')
+DB_PORT = env('DB_PORT');
 
-import database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
+    }
+}

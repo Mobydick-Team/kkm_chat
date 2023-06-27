@@ -3,16 +3,16 @@ from datetime import datetime
 from django.db import models
 
 class Room(models.Model):
-    user1 = models.TextField()
-    user2 = models.TextField()
+    user1 = models.CharField(unique=True, max_length=100)
+    user2 = models.CharField(unique=True, max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_chat_at = models.DateTimeField(auto_now_add=True)
+    last_chat_at = models.DateTimeField(auto_now_add=True, null=True)
     unread_chat = models.IntegerField(default=0)
     def read(self):
         self.unread_chat = 0
         self.save()
     def get_last_message(self):
-        return self.messages.last()
+        return self.messages.first()
     def add_message(self, room, from_id, type, content):
         from chat.serializers import MessageSerializer
         message = Message(room=room, from_id=from_id, content=content, type=type)
