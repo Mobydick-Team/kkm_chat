@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.db.models import Q
 from chat.models import Room
+from chat.serializers import RoomSerializer
 from mobidick.settings import JWT_SECRET_KEY
 from mobidick.utils.getUserId import getUserId
 
@@ -26,17 +27,13 @@ class UserConsumer(JsonWebsocketConsumer):
         pass
     def receive_json(self, content, **kwargs):
         _type = content["type"]
-        if _type == "chat.message" or _type == "chat.promise" or _type == "chat.image":
+        if _type == 'send.message':
+            room = Room.objects.get(pk=content["room_id"])
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     "type": "chat",
-                    "data": {
-                        "type": _type,
-                        "room_id": content["room_id"],
-                        "message": content["content"],
-                        "from_id": self.user_id
-                    },
+                    "data": RoomSerializer(room).data,
                 }
             )
         elif _type == 'read.message':
