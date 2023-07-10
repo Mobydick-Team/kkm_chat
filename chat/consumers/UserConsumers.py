@@ -13,7 +13,7 @@ class UserConsumer(JsonWebsocketConsumer):
         user_id = "",
     def connect(self):
         try:
-            self.user_id = getUserId(self.scope["url_route"]["kwargs"]["token"], JWT_SECRET_KEY)
+            self.user_id = getUserId(self.scope["url_route"]["kwargs"]["token"])
             self.group_name = "chat-%s" % self.scope["url_route"]["kwargs"]["user_id"]
             async_to_sync(self.channel_layer.group_add)(
                 self.group_name,
