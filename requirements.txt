@@ -21,3 +21,4 @@ django-cors-headers
 coreapi
 pyyaml
 pymysql
+websockets

@@ -1,10 +1,9 @@
 from http import HTTPStatus
 
-import requests
 from django.http import JsonResponse
 
 from mobidick.settings import JWT_SECRET_KEY
-from mobidick.utils.getUserId import getUserId
+from chat.utils.getUserId import getUserId
 
 
 class JsonWebTokenMiddleWare(object):

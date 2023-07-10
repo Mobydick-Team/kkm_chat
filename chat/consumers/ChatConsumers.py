@@ -1,9 +1,11 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.db.models import Q
+from django.utils import asyncio
+
 from chat.models import Room
-from mobidick.settings import JWT_SECRET_KEY
-from mobidick.utils.getUserId import getUserId
+from chat.utils.ConnectUserSocket import send_request
+from chat.utils.getUserId import getUserId
 
 
 class ChatConsumers(JsonWebsocketConsumer):
@@ -12,9 +14,11 @@ class ChatConsumers(JsonWebsocketConsumer):
         group_name = ""
         user_id = ""
         room = None
+        token = None
     def connect(self):
         try:
-            self.user_id = getUserId(self.scope["url_route"]["kwargs"]["token"], JWT_SECRET_KEY)
+            self.token = self.scope["url_route"]["kwargs"]["token"]
+            self.user_id = getUserId(self.token)
             self.group_name = "chat-%s" % self.scope["url_route"]["kwargs"]["room_id"]
             q = Q(pk=self.scope["url_route"]["kwargs"]["room_id"])
             q &= Q(user1 = self.user_id) | Q(user2 = self.user_id)
@@ -51,7 +55,11 @@ class ChatConsumers(JsonWebsocketConsumer):
                 }
             )
     def chat(self, message_dict):
-        self.send_json(message_dict["message"])
+        send_data = message_dict["message"]
+        self.send_json(send_data)
+        asyncio.get_event_loop().run_until_complete(send_request(self.room, self.token))
 
     def read_message(self, message_dict):
+        send_data = message_dict["message"]
         self.send_json(message_dict)
+        asyncio.get_event_loop().run_until_complete(send_request(self.room, self.token))
