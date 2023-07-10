@@ -1,10 +1,6 @@
-import asyncio
 import websockets
 
-from chat.utils.getUserId import getUserId
-
-
-async def send_request(room, send_data, token):
+async def send_request(room, token):
     async with websockets.connect('ws/user/' + room.user1 + '/' + token + '/') as websocket:
         await websocket.send('{"room_id" : ' + room.id + '}')
 
