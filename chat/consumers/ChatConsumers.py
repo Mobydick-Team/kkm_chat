@@ -1,10 +1,12 @@
+import asyncio
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.db.models import Q
-from django.utils import asyncio
 
 from chat.models import Room
-from chat.utils.ConnectUserSocket import send_request
+from chat.serializers import RoomSerializer
+from chat.utils.ConnectUserSocket import send_message_to_client
 from chat.utils.getUserId import getUserId
 
 
@@ -29,6 +31,7 @@ class ChatConsumers(JsonWebsocketConsumer):
             )
             self.accept()
         except Exception as e:
+            print(e)
             self.close()
 
 
@@ -57,9 +60,8 @@ class ChatConsumers(JsonWebsocketConsumer):
     def chat(self, message_dict):
         send_data = message_dict["message"]
         self.send_json(send_data)
-        asyncio.get_event_loop().run_until_complete(send_request(self.room, self.token))
+        serialized_room = RoomSerializer(self.room).data
+        send_message_to_client(self.room.user2, serialized_room);
 
     def read_message(self, message_dict):
-        send_data = message_dict["message"]
         self.send_json(message_dict)
-        asyncio.get_event_loop().run_until_complete(send_request(self.room, self.token))

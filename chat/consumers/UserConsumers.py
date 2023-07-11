@@ -1,9 +1,12 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
+from django.db import transaction
+
 from chat.models import Room
 from chat.serializers import RoomSerializer
 from mobidick.settings import JWT_SECRET_KEY
 from chat.utils.getUserId import getUserId
+
 
 
 class UserConsumer(JsonWebsocketConsumer):
@@ -24,10 +27,11 @@ class UserConsumer(JsonWebsocketConsumer):
             self.close()
     def disconnect(self, code):
         pass
+
     def receive_json(self, content, **kwargs):
         _type = content["type"]
         if _type == 'update':
-            room = Room.objects.get(pk=content["room_id"])
+            room = Room.objects.select_for_update().get(pk=content["room_id"])
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {

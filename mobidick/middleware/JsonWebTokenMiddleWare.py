@@ -16,7 +16,7 @@ class JsonWebTokenMiddleWare(object):
         try:
             if request.path != '/swagger/':
                 jwt = request.headers['Authorization'].split(' ')[1];
-                request.user_id = getUserId(jwt, JWT_SECRET_KEY)
+                request.user_id = getUserId(jwt)
         except:
             return JsonResponse(
                 {"error": "Authorization Error"}, status=HTTPStatus.UNAUTHORIZED

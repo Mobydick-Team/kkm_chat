@@ -1,8 +1,16 @@
-import websockets
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
-async def send_request(room, token):
-    async with websockets.connect('ws/user/' + room.user1 + '/' + token + '/') as websocket:
-        await websocket.send('{"room_id" : ' + room.id + '}')
-
-    async with websockets.connect('ws/user/' + room.user2 + '/' + token + '/') as websocket:
-        await websocket.send('{"room_id" : ' + room.id + '}')
+def send_message_to_client(user_id, room):
+    # 사용자 ID에 해당하는 채널 그룹 가져오기
+    channel_layer = get_channel_layer()
+    channel_name = "chat-%s" % user_id
+    print(room)
+    # 해당 채널 그룹에 메시지 전송
+    async_to_sync(channel_layer.group_send)(
+        channel_name,
+        {
+            "type": "update",
+            "data": room,
+        },
+    )
